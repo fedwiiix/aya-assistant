@@ -1,0 +1,233 @@
+<html>
+<head>
+<meta http-equiv='content-type' content='text/html; charset=utf-8'>
+<title>AIA</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+<style>
+    html *{cursor: none !important;}
+    body{
+        margin:0;
+        font-family: 'Roboto','Arial'; 
+    }
+    ::-webkit-scrollbar {
+        width: 0;
+    }
+    #message{
+        position:absolute;
+        z-index:5;
+        top:0%;
+        left:0%;
+        width:98%;
+        height: 98%;
+        background:rgba(0,0,0,0.8);
+        color:#fff;
+        vertical-align: middle;
+        padding:1%;
+        margin: 0;
+        display:none;
+    }
+    #messageBox{
+        position:absolute;
+        z-index:5;
+        top:20%;
+        left:5%;
+        width: 80%;
+        height: auto;
+        max-height: 55%;
+        padding:5%;
+        vertical-align:middle;
+        font-size:35px;
+        background-color: rgba(0,0,0,0.8);
+        transition-duration: 0.5s;
+        transform: rotateX(90deg);
+        text-align:center;
+        color:white;
+        overflow-y: scroll;
+    }
+    .text{
+        height: 60%;
+        width: 90%;
+        margin: 15% 5%;
+        font-size: 60px;
+        text-align: center;
+        display: block;
+
+    }
+    #quittMessage{
+        position:absolute;
+        z-index:4;
+        top:0%;
+        left:0%;
+        height:100%;
+        width:100%;
+        background:rgba(0,0,0,0);
+        color:#fff;
+        display:none;
+    }
+    #bpquittMessage{
+        width: 90px;
+        height: 90px;
+        position: absolute;
+        z-index:9;
+        bottom:0;
+        right: 0;
+        border: 0;
+        border-radius: 90% 0 0 0;
+        background-color: #006dad;
+        display:none;
+    }
+</style> 
+
+</head>
+<body id="body">
+
+    <button id="bpquittMessage" onclick="maskMessageBox()"></button>
+
+    <div id="quittMessage" onclick="maskMessageBox()"></div>
+    <div id="message" onclick="maskMessageBox()"></div>
+    <div id="messageBox" onclick="maskMessageBox()"></div>
+
+    <iframe id="MyIFrame" width="100%" height="100%" src="http://149.91.88.159/domotix/index.php?submit&user=app&pass=2gBDun342nDK6xXd4a4WR45Xz" style="border:0;"></iframe>
+
+</body>
+</html>
+
+
+<script>
+
+//setTimeout(function(){ window.location.reload(); }, 5000);
+
+
+quittMessageBox=document.getElementById('quittMessage')
+bpquittMessageBox=document.getElementById('bpquittMessage')
+message=document.getElementById('message')
+messageBox=document.getElementById('messageBox')
+
+
+
+
+var timeout
+var source  = new EventSource('getUpdate');
+source.onmessage = function(event){
+
+json=JSON.parse(event.data);
+
+    if(json.type!=""){
+        clearTimeout(timeout);
+        if(json.type=="link"){
+            if(json.text!="none"){
+                message.innerHTML="<iframe width='100%' height='100%' src='"+json.text+"' style='border:0;'></iframe>"
+                message.style.display='block'
+                quittMessageBox.style.display='block'
+                bpquittMessageBox.style.display='block'
+            }else{
+                message.innerHTML=""
+                message.style.display='none'
+            }
+        }else if(json.type=="refresh"){ 
+            if(json.mode==1)
+                window.location.reload()
+
+        }else{
+            quittMessageBox.style.display='block'
+            messageBox.innerHTML="<div>"+json.text+"</div>"
+            messageBox.style.transform = "rotateX(0deg)"; 
+            if(json.timeout){
+                if(json.timeout!="none")
+                    timeout = setTimeout("maskMessageBox();", json.timeout);
+                    //setTimeout(function(){ maskMessageBox() }, json.timeout);  
+            }else{
+                timeout = setTimeout("maskMessageBox();",'5000');
+                //setTimeout(function(){ maskMessageBox() }, 5000);  
+            }                 
+        }
+    }
+    
+}
+
+
+/*messageBox.addEventListener("click", function () {
+	maskMessageBox()
+});*/
+
+
+
+function maskMessageBox(){
+    bpquittMessageBox.style.display=message.style.display='none';
+    quittMessageBox.style.display=message.style.display='none';
+    messageBox.style.transform = "rotateX(90deg)";
+    setTimeout(function(){ messageBox.innerHTML=""; }, 1000);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+text=""
+getEvent()
+function getEvent(){
+    $.ajax({
+        "url": "resetTxt",
+        "method": "GET",
+        "success": function(response){
+
+            if(response){
+
+                json=JSON.parse(response);
+
+                if(json.type=="link"){
+                    message.innerHTML="<iframe width='100%' height='100%' src='"+json.text+"' style='border:0;'></iframe>"
+                    message.style.display='block'
+                }else{
+                    messageBox.innerHTML="<div>"+json.text+"</div>"
+                    messageBox.style.transform = "rotateX(0deg)"; 
+                    setTimeout(function(){ maskMessageBox() }, 5000);                   
+                }
+                quittMessageBox.style.display='block'
+                
+            }
+        },
+        "error": function(jqXHR, textStatus){
+        //alert('Request failed: ' + textStatus);
+        }
+    });
+    
+    setTimeout(getEvent,1000);
+}
+*/
+
+/* 
+function lireFichierTexte(fichier)
+{
+    var fichierBrut = new XMLHttpRequest();//On lance la requête pour récupérer le fichier
+    fichierBrut.open("GET", fichier, false); //On utilise une fonction sur l'événement "onreadystate"
+    fichierBrut.onreadystatechange = function ()
+    {
+        if(fichierBrut.readyState === 4)
+        {
+            if(fichierBrut.status === 200 || fichierBrut.status == 0) //On contrôle bien quand le statut est égal à 0
+            {
+                text = fichierBrut.responseText; //On peut récupérer puis traiter le texte du fichier
+            //alert(texteComplet);
+            }
+        }
+    }
+    fichierBrut.send(null);
+}*/
+</script>

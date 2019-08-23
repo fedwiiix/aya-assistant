@@ -1,0 +1,509 @@
+
+  		<link rel="stylesheet" type= "text/css" href="https://sjtm.fr/domotix/css/form.css" />
+		<link rel="stylesheet" type= "text/css" href="https://sjtm.fr/domotix/css/mise_en_page.css" />
+		<link rel="stylesheet" type= "text/css" href="https://sjtm.fr/domotix/css/cloud.css" />
+		<link rel="stylesheet" type="text/css" href="https://sjtm.fr/domotix/css/editer_doc.css">
+		<link rel="stylesheet" type= "text/css" href="https://sjtm.fr/domotix/css/musicPlayer.css" />
+
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+
+<style>
+	/*html *{cursor: none !important;}*/
+
+  #volet{
+    left:0;
+  }
+  .big-container-musicPlayer, #titre_pages{
+    left:15%;
+    width:84%;
+  }
+
+	#player_progress {
+		height: 10px;
+	}
+	#player_progress:hover {
+		height: 10px;
+	}
+
+
+</style>
+
+<!-- ********************************************************************************************************************************************************************* -->
+
+	<div id="volet" align="center" oncontextmenu="return monmenu(this,'')">
+		<li class="mv-item"><a onclick="afficher_music_file('')">Toutes</a></li>
+    
+    <div id="directories_liste"></div>
+		<!--?php 
+		$directory= $initial_directory.'/Musique';
+		$dir = scandir($directory) or die($directory.' Erreur de listage : le répertoire n\'existe pas'); // on ouvre le contenu du dossier courant
+		foreach ($dir as $element) {   
+			if($element != '.' && $element != '..') {
+				if (is_dir($directory.'/'.$element)) {
+					?><li class="mv-item"><a onclick="afficher_music_file('<?php echo $element; ?>')"><?php echo $element ?></a></li><?php
+				}
+			}		
+		}
+		?-->
+		<input type="search" id="recherche" placeholder="Search" ></input>
+
+	</div>
+
+	<div class="big-container-musicPlayer" style="overflow:hidden;">
+
+	<audio id="player_1" autoplay="autoplay" onerror="next_music();"><source src=""></source></audio>
+					
+	<div id="musicPlayer_liste" align="center"></div>
+	
+	<div id="musicbox">
+		<div class="bp_musicbox">
+			<ee class="bp_previous"></ee>
+			<ee class="bp_play"></ee>
+			<ee class="bp_next"></ee>
+		</div>
+
+		<progress id="player_progress" value="0" step="0.01" max="100"></progress>
+		<div id="player_time"><span id="player_currenttime">00:00</span><span>/</span><span id="player_timemax">00:00</span></div>
+		<input type="range" id="player_volume" min="0" max="1" step="0.01" value="1">
+		<div id="player_titre">Music Player</div>
+		<div id="player_artist"></div>
+		<div id="player_album"></div>
+		<div id="player_year"></div>
+		<img id="player_image" src="">
+
+
+
+		<input type="checkbox" id="bp_aleatoire" checked/>
+    <label class="bp_aleatoire" for="bp_aleatoire"><aaaa></aaaa></label>
+
+		<div class="bp_playlist">
+			<button class="automix">Mix</button>
+      <button class="info">Info</button>
+		</div>
+	</div>
+
+	<div id="playlistbox">
+		
+		<div id="player_info_affichage">
+			<img id="player_image_affichage" src="">
+			<div id="player_titre_affichage"></div>
+			<div id="player_artist_affichage"></div>
+			<div id="player_album_affichage"></div>
+			<div id="player_year_affichage"></div>
+			<div id="player_time_affichage"></div>
+
+		</div>
+		<br>
+		<ul class="playlist"></ul>
+
+		<div style="height:150px; width:100%;"></div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+
+//******************************************************************************************************************* var and fuctions
+
+
+
+player_1 = document.getElementById("player_1");
+player_1_play="play"
+
+actif_player_id="player_1"
+actif_player = document.getElementById(actif_player_id);
+actif_music=0
+
+playlistMode=0
+aleatoireMode=1
+infoModeMode=0
+
+actif_music_dir =""  
+localBackEnd="http://192.168.1.240:8087/"
+
+webBackEnd="https://sjtm.fr/domotix/"
+initial_music_directory ="/home/fred/cloud/Musique";
+webPass="cYH6tMtk9M75nN9reDy4KH28"
+
+modeWeb="local"
+
+
+
+
+$( document ).ready(function() {
+
+   $('#player_image_affichage').attr('src',webBackEnd+"/img/music/musique.png");	
+
+   //$('#'+actif_player_id).attr("src","http://127.0.0.1:8080/")	
+   //$("#musicPlayer_liste").load("http://127.0.0.1:8080/musicPlayer_liste"+"");
+  
+	if (modeWeb=="local"){
+   		$("#directories_liste").load(localBackEnd+"musicPlayer_liste?directories=1");
+   	}else{
+  		$("#directories_liste").load(webBackEnd+"musicPlayer/musicPlayer_liste.php?directories=1&initial_directory="+initial_music_directory+"&pass="+webPass);
+  	}
+  
+  afficher_music_file('') 
+
+  if( screen.width <= 800 ) { // mobile menu event swiper
+  
+    $('body').on('touchstart', function(e) {
+        $(this).data('p0', { x: e.originalEvent.touches[0].pageX, y: e.originalEvent.touches[0].pageY });
+    }).on('touchend', function(e) {
+        var p0 = $(this).data('p0'),
+            p1 = { x: e.originalEvent.changedTouches[0].pageX, y: e.originalEvent.changedTouches[0].pageY },
+            //d = Math.sqrt(Math.pow(p1.x - p0.x, 2) + Math.pow(p1.y - p0.y, 2));
+            testSwipe = p0.x - p1.x
+
+        if (testSwipe > 150) {                              // swipeleft
+          if ($('#volet').length)
+              $("#volet").animate(  {'left': '-80%'},500);
+        }else if (testSwipe < -150) {                      // swiperight
+          if ($('#volet').length) 
+              $("#volet").animate(  {'left': '0%'},500);
+
+              $('li').click(function() {                  // auto return menu
+                if ($('#volet').length) 
+                  $("#volet").animate(  {'left': '-80%'},500);
+              });
+        }
+    })
+
+  }
+
+});
+
+  
+  
+  
+    
+function afficher_music_file(link){
+	actif_music_dir = link;	
+
+	if (modeWeb=="local")		
+		$("#musicPlayer_liste").load(localBackEnd+"musicPlayer_liste?dossier="+encodeURIComponent(link));
+	else		
+		$("#musicPlayer_liste").load(webBackEnd+"musicPlayer/musicPlayer_liste.php?dossier="+encodeURIComponent(link)+"&initial_directory="+initial_music_directory+"&pass="+webPass);	
+
+}
+
+function urldecode (str) {
+  return decodeURIComponent((str + '').replace(/\+/g, '%20'));
+}
+function baseName(str)
+{
+   var base = new String(str).substring(str.lastIndexOf('/') + 1); 
+    if(base.lastIndexOf(".") != -1)       
+        base = base.substring(0, base.lastIndexOf("."));
+   return base;
+}
+
+//******************************************************************************************************************* Player 
+
+function click_music(link){
+	get_music_tag_and_affiche( link )
+}
+
+function play_music(link,name, n){
+
+	if(playlistMode && name!='' ){
+		$( ".playlist" ).append( "<li class='playlist_title'  name='"+link+"' onclick='$(this).remove(); play_music( \""+link+"\",\"\","+n+")' >"+name+"</li>" );
+	}else{
+		if (modeWeb=="local")
+			$('#'+actif_player_id).attr("src",localBackEnd+"player?file="+(link))	
+		else
+			$('#'+actif_player_id).attr("src",webBackEnd+"musicPlayer/player.php?file="+(initial_music_directory+"/"+link))	
+		$(".bp_play").css('background-image','url('+webBackEnd+'img/music/pause.png)')
+		get_music_tag( link )
+		actif_music=parseInt(n)
+	}	
+}
+
+//******************************************************************************************************* prev next and random
+
+$(".bp_previous").click(function(event) {
+	if(aleatoireMode && !playlistMode){
+		random_music()
+	}else{
+		if( actif_music >0 && !playlistMode){
+			$('.music_title').eq(actif_music-1).click();
+		}
+	}
+});
+
+$(".bp_next").click(function(event) {
+	next_music()
+});
+player_1.onended = function() {
+	next_music()
+};
+
+function next_music(){
+	if(aleatoireMode && !playlistMode ){
+		random_music()
+	}else{
+		if(playlistMode){
+			play_music($('.playlist_title').first().attr('name'),'', $('.playlist_title').first().attr('id') )
+			$( ".playlist_title" ).first().remove();
+
+		}else if( $('.music_title').eq(actif_music-1).attr('id') && !playlistMode ){
+			$('.music_title').eq(actif_music+1).click();
+			
+		}else{
+			random_music()
+		}
+	}
+}
+
+function random_music(){
+	n = $( ".music_title" ).length;
+	rand = Math.floor(Math.random()*n);
+	$('.music_title').eq(rand).click();
+	actif_music=rand
+}
+
+//******************************************************************************************************* random and playlist mode
+
+$(".bp_aleatoire").click(function(event) {
+	if( $("#bp_aleatoire").is(':checked') ){
+		aleatoireMode=0	
+	} else {
+		aleatoireMode=1
+	}
+	console.log(aleatoireMode)
+});
+
+$(".automix").click(function(event) {
+	if( playlistMode ){
+    	$("#playlistbox").animate(  {"bottom": "-80%"},500);
+		playlistMode=0	
+	} else {
+		$("#playlistbox").animate(  {"bottom": "0px"},500);	
+		playlistMode=1
+	}
+}); 
+$(".info").click(function(event) {
+		if( playlistMode==0 ){
+      if( infoModeMode ){
+        $("#playlistbox").animate(  {"bottom": "-80%"},500);
+        infoModeMode=0	
+      } else {
+        $("#playlistbox").animate(  {"bottom": "-40%"},500);	
+        infoModeMode=1
+      }
+    }
+}); 
+
+$( function() {					// sortable
+    $( ".playlist" ).sortable();
+    $( ".playlist" ).disableSelection();
+  } );
+
+//******************************************************************************************************* play
+
+$(".bp_play").click(function() {
+	if(!$('#'+actif_player_id).attr("src")){
+		random_music()
+	}else{
+		if(!player_1.paused){
+				player_1.pause();
+				$(".bp_play").css('background-image','url('+webBackEnd+'img/music/white_play.png)')
+			
+		}else{
+			player_1.play()
+			$(".bp_play").css('background-image','url('+webBackEnd+'img/music/white_pause.png)')
+		}
+	}
+});
+
+$( ".bp_play" ).mouseenter(function() {
+  
+    var img = $(this).css('background-image').split( '/' ).pop().slice(0, -6)
+    if(img == 'play')
+        $( this ).css('background-image','url('+webBackEnd+'img/music/white_play.png)')
+    else if(img == 'pause')
+      $( this ).css('background-image','url('+webBackEnd+'img/music/white_pause.png)')
+});
+$( ".bp_play" ).mouseleave( function() {
+    var img = $(this).css('background-image').split( '/' ).pop().slice(0, -6)
+    if(img == 'white_play')
+    	$( this ).css('background-image','url('+webBackEnd+'img/music/play.png)')
+	  else if(img == 'white_pause')
+		  $( this ).css('background-image','url('+webBackEnd+'img/music/pause.png)')
+});				
+
+$("#player_volume").on("input", function() {
+	player_1.volume = $(this).val();
+});
+
+//******************************************************************************************************* sound and progress bar
+var progressbar = document.getElementById('player_progress');
+progressbar.addEventListener("click", seek);
+
+function seek(event) {
+	var percent = event.offsetX / this.offsetWidth;
+	actif_player.currentTime = percent * actif_player.duration;
+	progressbar.value = percent
+}
+player_1.addEventListener('timeupdate',function (){
+	curtime = parseInt(player_1.currentTime, 10);
+	$("#player_progress").attr("value", curtime);
+	$("#player_currenttime").html(formatTime(curtime));
+
+	if(actif_player.duration){
+		$('#player_timemax').html(formatTime(actif_player.duration))
+		$("#player_progress").attr("max", player_1.duration);
+	}
+
+});
+
+function formatTime(time) {
+    var hours = Math.floor(time / 3600);
+    var mins  = Math.floor((time % 3600) / 60);
+    var secs  = Math.floor(time % 60);
+    if (secs < 10) {
+        secs = "0" + secs;
+    }
+    if (hours) {
+        if (mins < 10) {
+            mins = "0" + mins;
+        }
+        return hours + ":" + mins + ":" + secs; // hh:mm:ss
+    } else {
+        return mins + ":" + secs; // mm:ss
+    }
+}
+
+//*******************************************************************************************************   get tag
+
+function get_music_tag( file ){
+
+	if (modeWeb=="local")
+		url=localBackEnd+"getTag" //?file="+file
+	else
+		url=webBackEnd+"/musicPlayer/player_action.php?initial_directory="+initial_music_directory+"&pass="+webPass
+		$.ajax({
+				type: "POST",
+				url: url,
+				dataType: "json",
+				data: {action: "get_music_tag" , file },
+				"success": function(response){ 	
+					
+					$("#player_titre").html(urldecode(response.titre));
+					$("#player_album").html(urldecode(response.album));
+					$("#player_artist").html(urldecode(response.artist));
+					$("#player_year").html(urldecode(response.year));
+					$('#player_timemax').html(urldecode(response.time))
+
+					if(response.image!=''){
+
+						var image = $("#player_image");
+						image.fadeOut('slow', function () {
+							image.attr('src','data:image/png;base64,'+response.image);
+							image.fadeIn('slow');
+						});
+					}else{
+						var image = $("#player_image");
+						if(image.attr('src')!= webBackEnd+"/img/music/musique.png"){
+							image.fadeOut('slow', function () {
+								image.attr('src',webBackEnd+"/img/music/musique.png");
+								image.fadeIn('slow');
+							});
+						}
+					}
+				},
+				"error": function(jqXHR, textStatus){ alert('Request failed: ' + textStatus); }
+		});	
+	}
+
+
+function get_music_tag_and_affiche( file ){
+
+
+	/******onclick ****/
+	if (modeWeb!="local"){
+		$.ajax({
+				type: "POST",
+				url: webBackEnd+"/musicPlayer/player_action.php?initial_directory="+initial_music_directory+"&pass="+webPass,
+				dataType: "json",
+				data: {action: "get_music_tag" , file },
+				"success": function(response){ 	
+					
+					$("#player_titre_affichage").html(urldecode(response.titre));
+					$("#player_album_affichage").html("");
+					$("#player_artist_affichage").html("");
+					$("#player_year_affichage").html("");
+					$('#player_time_affichage').html("");
+
+					if(response.album)
+						$("#player_album_affichage").html(urldecode("Album: "+response.album));
+					if(response.artist)
+						$("#player_artist_affichage").html(urldecode("Artiste: "+response.artist));
+					if(response.year)
+						$("#player_year_affichage").html(urldecode("Année: "+response.year));
+					if(response.time)
+						$('#player_time_affichage').html(urldecode("Durée: "+response.time))
+
+					if(response.image!=''){
+
+						var image = $("#player_image_affichage");
+						image.fadeOut('slow', function () {
+							image.attr('src','data:image/png;base64,'+response.image);
+							image.fadeIn('slow');
+						});
+					}else{
+						var image = $("#player_image_affichage");
+						if(image.attr('src')!= webBackEnd+"/img/music/musique.png"){
+							image.fadeOut('slow', function () {
+								image.attr('src',webBackEnd+"/img/music/musique.png");
+								image.fadeIn('slow');
+							});
+						}
+					}
+				},
+				"error": function(jqXHR, textStatus){ alert('Request failed: ' + textStatus); }
+		});	
+	}
+}
+
+//*******************************************************************************************************   recherche
+
+function seach(recherche){
+	if (modeWeb=="local")		
+		$("#musicPlayer_liste").load(webBackEnd+"musicPlayer_liste?dossier="+encodeURIComponent(actif_music_dir)+"&recherche="+encodeURIComponent(recherche));
+	else
+		$("#musicPlayer_liste").load(webBackEnd+"musicPlayer/musicPlayer_liste.php?dossier="+encodeURIComponent(actif_music_dir)+"&recherche="+encodeURIComponent(recherche)+"&initial_directory="+initial_music_directory+"&pass="+webPass);
+}
+
+$( "#recherche" ).mouseover(function() {
+  $("#recherche").animate({'border-radius':'10%','width':'80%'},200);
+});
+$( "#recherche" ).mouseleave(function() {
+	if(document.getElementById("recherche").value==''){
+  setTimeout(function() {
+      $("#recherche").stop().animate({'width':'32px','border-radius':'80%'},500);
+      }, 1000);
+	}
+});
+  var text = document.getElementById("recherche");
+  text.addEventListener('keydown', function() {
+    var recherche = document.getElementById("recherche").value;
+        seach(recherche);  }, false);
+  text.addEventListener('keyup', function() {
+    var recherche = document.getElementById("recherche").value;
+        seach(recherche);  
+	if(document.getElementById("recherche").value==''){
+  setTimeout(function() {
+      $("#recherche").stop().animate({'width':'32px','border-radius':'80%'},500);
+      }, 1000);
+	}	
+	if(document.getElementById("recherche").value!=''){
+  $("#recherche").animate({'border-radius':'10%','width':'80%'},200);
+	}	
+	}, false);
+
+</script>

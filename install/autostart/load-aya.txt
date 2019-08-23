@@ -1,0 +1,10 @@
+sudo nano ~/.config/autostart/aya.desktop
+
+Then add the following:
+
+[Desktop Entry]
+Type=Application
+Exec=/home/pi/ayaServer/loadAya.sh
+X-GNOME-Autostart-enabled=true
+Name=aya
+Comment=Start aya

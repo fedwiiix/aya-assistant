@@ -1,0 +1,11 @@
+sudo nano ~/.config/autostart/autoChromium.desktop
+
+Then add the following:
+
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/chromium-browser --noerrdialogs --disable-session-crashed-bubble --disable-infobars --kiosk http://127.0.0.1:8080/index?pass=e698d2b1ceb2b24c5666201572b3efb6
+X-GNOME-Autostart-enabled=true
+Name[en_US]=AutoChromium
+Name=AutoChromium
+Comment=Start Chromium when GNOME starts

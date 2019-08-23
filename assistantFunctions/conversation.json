@@ -1,0 +1,108 @@
+
+
+
+{
+
+
+    "commandes":[
+
+        { "keyword": [ ["arrête de parler"] ], "action": "reponse_active", "cmd": "0", "reponse": ["je me tais", "je ne répond plus"]},  
+        { "keyword": [ ["tu peux parler"] ], "action": "reponse_active", "cmd": "1", "reponse": ["merci", "je peux parler"]},
+
+        { "keyword": [ ["heure","est-il"],["heure","quelle"],["peux-tu", "heure"] ], "action": "heure", "reponse": ["il est ", "il est ", ""] },
+        { "keyword": [ ["quel", "jour"],["quelle","date"] ], "action": "day", "reponse": ["on est ", "on est ", ""] },
+
+        { "keyword": [ ["quelle", "température"],["peux-tu", "température"],["donne-moi", "température"] ], "action": "temperature", "reponse": ["La temperature est de ", ""] },
+        { "keyword": [ ["quel", "humidité"],["peux-tu", "humidité"],["donne-moi", "humidité"] ], "action": "humidite", "reponse": ["L'humidité est de ", ""] },
+        { "keyword": [ ["quelle", "pression"],["peux-tu", "pression"],["donne-moi", "pression"] ], "action": "presure", "reponse": ["La pression est de ", ""] },
+
+        { "keyword": [ ["lance", "musique"], ["démarre", "musique"],["allume", "musique"],["commence", "musique"] ], "action": "action_domotix", "cmd": "music_play", "reponse": ["j'allume la musique", "c'est fait", "oui", ""] },
+        { "keyword": [ ["stop", "musique"],["coupe", "musique"],["pause", "musique"],["mets", "pause"],["arrête", "musique"]], "action": "action_domotix", "cmd": "music_pause" },
+
+        { "keyword": [ ["relance", "musique"],["remet", "musique"],["reprend", "musique"],["continue", "musique"],["play", "musique"] ], "action": "action_domotix", "cmd": "music_play" },        
+        { "keyword": [ ["étein", "musique"],["off", "musique"] ], "action": "action_domotix", "cmd": "music_stop" },
+        { "keyword": [ ["suivante", "musique"] ], "action": "action_domotix", "cmd": "music_next" },
+        { "keyword": [ ["précédente", "musique"] ], "action": "action_domotix", "cmd": "music_previous" },
+
+        { "keyword": [ ["augmente", "volume"] ], "action": "action_domotix", "cmd": "music_increasevolume" },
+        { "keyword": [ ["diminue", "volume"] ], "action": "action_domotix", "cmd": "music_decreasevolume" },
+        { "keyword": [ ["%", "musique"],["%", "son"],["%", "volume"],["pourcents", "volume"] ], "action": "volume" },
+
+        { "keyword": [ ["met", "playlist"] ], "action": "action_domotix", "cmd": "playlist" },
+        { "keyword": [ ["affiche", "playlist"] ], "action": "action_domotix", "cmd": "music_displayPlaylist", "reponse": ["je vous l'affiche", "oui", ""] },
+
+
+        { "keyword": [ ["quelle", "météo"], ["donne", "meteo"] ], "action": "meteo" },
+        { "keyword": [ ["donne","agenda"],["quel","agenda"],["quel","événement"] ], "action": "agenda" },
+        { "keyword": [ ["as-tu", "citation"], ["donne", "citation"] ], "action": "citation" },
+        { "keyword": [ ["blague"] ], "action": "blague" },
+
+
+        { "keyword": [ ["affiche", "météo"] ], "action": "affiche", "lien": "https://www.tameteo.com/meteo_Lannion-Europe-France-Cotes+dArmor-LFRO-1-24285.html", "reponse": ["je vous l'affiche", "oui", ""] },
+        { "keyword": [ ["affiche", "actu"] ], "action": "affiche", "lien": "https://www.20minutes.fr/actus", "reponse": ["je vous l'affiche", "oui", ""] },
+        
+        { "keyword": [ ["affiche", "bouton", "appareil"], ["affiche", "appareils"] ], "action": "affiche", "lien": "widget.php?onglet=bouton_appareil", "reponse": ["je vous l'affiche", "oui", ""] },
+        { "keyword": [ ["affiche", "agenda"], ["affiche", "événement"] ], "action": "affiche", "lien": "widget.php?onglet=agenda", "reponse": ["je vous l'affiche", "oui", ""] },
+        { "keyword": [ ["affiche", "notification"],["montre", "notification"] ], "action": "affiche", "lien": "widget.php?onglet=notification", "reponse": ["je vous l'affiche", "oui", ""] },
+        { "keyword": [ ["affiche", "gestion"] ], "action": "affiche", "lien": "widget.php?onglet=gestion", "reponse": ["je vous l'affiche", "oui", ""] },
+        { "keyword": [ ["affiche", "musique"] ], "action": "affiche", "lien": "widget.php?onglet=music", "reponse": ["je vous l'affiche", "oui", ""] },
+        { "keyword": [ ["affiche", "note"] ], "action": "affiche", "lien": "widget.php?onglet=note", "reponse": ["je vous l'affiche", "oui", ""] },
+        { "keyword": [ ["affiche", "message"] ], "action": "affiche", "lien": "widget.php?onglet=messagerie", "reponse": ["je vous l'affiche", "oui", ""] },
+        { "keyword": [ ["affiche", "commande", "vocale"] ], "action": "affiche", "lien": "widget.php?onglet=commandeVocale", "reponse": ["je vous l'affiche", "oui", ""] },
+        { "keyword": [ ["masque", "playlist"],["masque", "meteo"],["masque", "actu"],["masque", "bouton"],["masque", "agenda"],["masque", "notification"],["masque", "gestion"],["masque", "musique"],["masque", "note"],["masque", "message"],["masque", "commande", "vocale"] ], "action": "affiche", "lien": "none", "reponse": ["oui", ""] },
+	
+	{ "keyword": [["ajoute", "alarme"], ["ajoute", "réveil"], ["mets", "réveil"], ["mets", "reveil"], ["préviens", "moi"]], "action": "alarme", "reponse": ["Bien reçu", "ok", "je programme ça", "c'est fait"] },
+        { "keyword": [ ["allume", "écran"] ], "action": "action_domotix", "cmd": "ecranOn", "reponse": ["Bien reçu", "écran allumé", ""] },
+        { "keyword": [ ["étein", "écran"] ], "action": "action_domotix", "cmd": "ecranOff", "reponse": ["Bien reçu", "écran éteint", ""] },
+	{ "keyword": [["prépare", "thé"], ["prépare", "café"]], "action": "action_domotix", "cmd": "serial -c '|eau60|'", "reponse": ["Bien reçu", "Bouilloire sur 60", "je le prépare", ""] },
+
+        {"keyword":[ ["eee"] ] }
+    ],
+
+    
+
+
+	"question":[
+
+		{ "question": "quel âge as-tu", "1": "j'ai 33 ans"},		
+        { "question": "What can you do","nb_rep":"3", "1": "je peux lire de la musique", "2": "je sert à vous simplifier la vie", "3": "je ne sert à rien"},
+        { "question": "Who are you", "nb_rep":"2" ,"1": "Mon nom est jeanne, je suis votre assistant de domotique", "2":"je suis votre assistant de domotique"},
+        { "question": "Who is your father","nb_rep":"2", "1": "je n'ai pas de père", "2": "Mon père est dark Vador, c'est lui qui me l'à dit"},
+        { "question": "Do you like joke","nb_rep":"2", "1": "oui, j'aime les blagues", "2": "veux tu que je t'en raconte une"},
+        { "question": "Do you speak", "1": "Non, désolé"},
+
+		{ "question": "Do you speak french", "1": "Oui, je parle francais"},
+        { "question": "what is your favorite sport", "1": "mon sport préféré est le surf"},
+
+		{ "question": "es tu capable de lire de la musique", "nb_rep":"2", "1": "je peux allumer la musique pour vous", "2": "vous n'avez qu'à dire start musique"},
+		{ "question": "how to stop music", "1": "je peux l'éteindre pour vous", "2":"Vous n'avez qu'à me le demander" }
+	],
+		
+		
+"test": [
+    { "question": "", "1": ""},
+
+    { "question": "", "action": "","nb_rep":"2", "1": "", "2": ""},
+
+    { "question": "", "action": "","nb_rep":"3", "1": "", "2": "", "3": ""},
+
+    { "question": "", "action": "","nb_rep":"1", "1": ""},
+
+
+    { "question": "", "action": "","nb_rep":"1", "1": ""}
+
+
+
+]
+        
+ 
+
+
+}
+
+
+
+
+
+
+
