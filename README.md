@@ -1,6 +1,12 @@
 # aya-assistant
 vocal assistant for home automation
 
+<p align="center">
+  <img src="./img/aya.jpg" height="300">
+  <img src="./img/plan.png" height="300">
+  <em>AIA Project</em>
+</p>
+
 ## functions
 
 * voice recognition and speak
@@ -49,12 +55,6 @@ the raspberry show the domotix web page on chromium browser
 ### music player
 
 the assistant reads the music on domotix server when they aren't not in a local file. You can add your music directly to the server. 
-
-<p align="center">
-  <img src="./img/aya.jpg" height="300">
-  <img src="./img/plan.png" height="300">
-  <em>AIA Project</em>
-</p>
 
 ## install
 
