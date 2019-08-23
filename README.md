@@ -1,5 +1,5 @@
 # aya-assistant
-vocal assistant for home automation
+vocal assistant for home automation in Aya Project
 
 <p align="center">
   <img src="./img/aya.jpg" height="300">
