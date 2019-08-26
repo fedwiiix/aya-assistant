@@ -4,8 +4,8 @@ vocal assistant for home automation in Aya Project
 <p align="center">
   <img src="./img/aya.jpg" height="300">
   <img src="./img/plan.png" height="300">
-  <em>AIA Project</em>
 </p>
+  <em>AIA Project</em>
 
 ## functions
 
@@ -71,3 +71,8 @@ the assistant reads the music on domotix server when they aren't not in a local 
 * translate (googletrans)
 * webcam server (cherrypy)
 * music player (vlc)
+
+<p align="center">
+  <img src="./img/aya2.jpg" height="300">
+  <img src="./img/inside.png" height="300">
+</p>
